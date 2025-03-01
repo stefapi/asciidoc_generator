@@ -545,6 +545,14 @@ End Sub
    <loext:graphic-properties draw:fill="solid" draw:fill-color="#eeeeee"/>
    <style:paragraph-properties fopadding="0.499cm" style:page-number="auto" fo:background-color="#eeeeee" fo:padding="0.499cm" fo:border="0.06pt fine-dashed #000000"/>
   </style:style>
+  <style:style style:name="Informalexample" style:family="paragraph" style:parent-style-name="Admonition" style:default-outline-level="" style:list-style-name="" style:master-page-name="">
+   <loext:graphic-properties draw:fill="solid" draw:fill-color="#eeeeee"/>
+   <style:paragraph-properties fopadding="0.499cm" style:page-number="auto" fo:background-color="#eeeeee" fo:padding="0.499cm" fo:border="0.06pt fine-dashed #000000"/>
+  </style:style>
+  <style:style style:name="Example" style:family="paragraph" style:parent-style-name="Admonition" style:default-outline-level="" style:list-style-name="" style:master-page-name="">
+   <loext:graphic-properties draw:fill="solid" draw:fill-color="#eeeeee"/>
+   <style:paragraph-properties fopadding="0.499cm" style:page-number="auto" fo:background-color="#eeeeee" fo:padding="0.499cm" fo:border="0.06pt fine-dashed #000000"/>
+  </style:style>  
   <style:style style:name="Frame_20_contents" style:display-name="Frame contents" style:family="paragraph" style:parent-style-name="Standard" style:class="extra"/>
   <style:style style:name="Header" style:family="paragraph" style:parent-style-name="Header_20_and_20_Footer" style:class="extra">
    <style:paragraph-properties text:number-lines="false" text:line-number="0">

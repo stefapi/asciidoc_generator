@@ -217,6 +217,7 @@ output = treat_admonest(output, "Note", "Note981267", "Puce_20_Note", "Note")
 output = treat_admonest(output, "Caution", "Caution981267", "Puce_20_Caution", "Caution")
 output = treat_admonest(output, "Warning", "Warning981267", "Puce_20_Warning", "Warning")
 output = treat_admonest(output, "", "Informalexample981267", "Puce_20_Informalexample", "Informalexample")
+output = treat_admonest(output, "", "Example981267", "Puce_20_Example", "Example")
 
 output = re.sub(r".*saut_de_page784567.*", '<text:p text:style-name="Pagebreak"/>', output)
 
