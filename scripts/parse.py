@@ -208,7 +208,7 @@ def treat_admonest(data, admon, tag, puce, style):
         )
 
     # Remplacer les occurrences
-    return re.sub(pattern, replacement, output, re.DOTALL)
+    return re.sub(pattern, replacement, output, flags=re.DOTALL)
 
 
 output = treat_admonest(output, "Tip", "Tip981267", "Puce_20_Tip", "Tip")
@@ -224,7 +224,6 @@ output = re.sub(r".*saut_de_page784567.*", '<text:p text:style-name="Pagebreak"/
 try:
     with open(output_file, 'w', encoding='utf-8') as file:
         file.write(output)
-    print(f"Le fichier résultat a été écrit dans : {output_file}")
 except Exception as e:
     print(f"Erreur lors de l'écriture dans le fichier {output_file}: {e}")
     sys.exit(1)

@@ -90,7 +90,7 @@ pandoc -f docbook -t odt -L $prog_dirname/admonition.lua --reference-doc="$templ
 else
 pandoc -f docbook -t odt -L $prog_dirname/admonition.lua --template="$template_dir"/template.fodt --reference-doc="$template_dir"/style.odt "$outdir"/temporary_file.xml -o "$ofile.odt"
 fi
-loffice --headless --invisible --convert-to fodt --outdir "$outdir" "$ofile.odt"
+loffice --headless --invisible --convert-to fodt --outdir "$outdir" "$ofile.odt" >/dev/null
 
 # treat fields in fodt file from xml: title, author, signature table, revision table
 
@@ -107,9 +107,9 @@ fi
 
 
 # generate output documents
-loffice --headless --invisible --convert-to odt --outdir "$outdir" "$ofile.fodt"
-loffice --headless --invisible --convert-to docx --outdir "$outdir" "$ofile.fodt"
-loffice --headless --invisible --convert-to pdf --outdir "$outdir" "$ofile.odt"
+loffice --headless --invisible --convert-to odt --outdir "$outdir" "$ofile.fodt" >/dev/null
+loffice --headless --invisible --convert-to docx --outdir "$outdir" "$ofile.fodt" >/dev/null
+loffice --headless --invisible --convert-to pdf --outdir "$outdir" "$ofile.odt" >/dev/null
 
 # generate a flat asciidoctor file for AI. extension is adoc to indicate chatgpt that this document is an asciidoc
 asciidoctor-reducer -o "$ofile.adoc" "$file"
