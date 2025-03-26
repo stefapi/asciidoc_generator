@@ -16,6 +16,7 @@
 
 import sys
 import re
+import html
 import datetime
 import xml.etree.ElementTree as ET
 from jinja2 import Template
@@ -34,31 +35,31 @@ namespaces = {'doc': 'http://docbook.org/ns/docbook'}
 
 # Extraire les informations principales
 try:
-    author_firstname = root.find('.//doc:firstname', namespaces).text
+    author_firstname = html.escape(root.find('.//doc:firstname', namespaces).text)
 except:
     author_firstname = ''
 try:
-    author_surname = root.find('.//doc:surname', namespaces).text
+    author_surname = html.escape(root.find('.//doc:surname', namespaces).text)
 except:
     author_surname = ''
 try:
-    author_email = root.find('.//doc:email', namespaces).text
+    author_email = html.escape(root.find('.//doc:email', namespaces).text)
 except:
     author_email = ''
 try:
-    author_initials = root.find('.//doc:authorinitials', namespaces).text
+    author_initials = html.escape(root.find('.//doc:authorinitials', namespaces).text)
 except:
     author_initials = ''
 try:
-    title = root.find('.//doc:title', namespaces).text
+    title = html.escape(root.find('.//doc:title', namespaces).text)
 except:
     title = ''
 try:
-    subtitle = root.find('.//doc:subtitle', namespaces).text
+    subtitle = html.escape(root.find('.//doc:subtitle', namespaces).text)
 except:
     subtitle = ''
 try:
-    date = root.find('.//doc:date', namespaces).text
+    date = html.escape(root.find('.//doc:date', namespaces).text)
 except:
     title = datetime.datetime.now()
 
@@ -83,24 +84,24 @@ try:
 
     # Extraire authortitle et reviewer depuis simpara
     try:
-        authortitle = extract_field(simpara_content, 'authortitle')
+        authortitle = html.escape(extract_field(simpara_content, 'authortitle'))
     except:
         pass
     try:
-        access_level = extract_field(simpara_content, 'access')
+        access_level = html.escape(extract_field(simpara_content, 'access'))
     except:
         pass
     if not access_level:
         access_level='public'
     reviewer_line = extract_field(simpara_content, 'reviewer')
     if reviewer_line:
-        reviewer, reviewertitle = [s.strip() for s in reviewer_line.split('|')]
+        reviewer, reviewertitle = [html.escape(s.strip()) for s in reviewer_line.split('|')]
     else:
         reviewer, reviewertitle = '', ''
 
     approver_line = extract_field(simpara_content, 'approver')
     if approver_line:
-        approver, approvertitle = [s.strip() for s in approver_line.split('|')]
+        approver, approvertitle = [html.escape(s.strip()) for s in approver_line.split('|')]
     else:
         approver, approvertitle = '', ''
 
@@ -114,10 +115,10 @@ try:
             date, rest = rest.split(':', 1)
             author, comment = rest.split('|', 1)
             revtable.append({
-                'version': version.strip(),
-                'author': author.strip(),
-                'date': date.strip(),
-                'comment': comment.strip(),
+                'version': html.escape(version.strip()),
+                'author': html.escape(author.strip()),
+                'date': html.escape(date.strip()),
+                'comment': html.escape(comment.strip()),
             })
         except ValueError:
             # Si une ligne est mal formée, on l'ignore
@@ -130,16 +131,16 @@ except:
 revhistory = root.find('.//doc:revhistory', namespaces)
 if revhistory is not None:
     for revision in revhistory.findall('.//doc:revision', namespaces):
-        revnumber = revision.find('./doc:revnumber', namespaces).text
-        date = revision.find('./doc:date', namespaces).text
-        revremark = revision.find('./doc:revremark', namespaces).text
+        revnumber = html.escape(revision.find('./doc:revnumber', namespaces).text)
+        date = html.escape(revision.find('./doc:date', namespaces).text)
+        revremark = html.escape(revision.find('./doc:revremark', namespaces).text)
         comment = ' '
         if revremark is None:
-            author = revision.find('./doc:authorinitials', namespaces).text
+            author = html.escape(revision.find('./doc:authorinitials', namespaces).text)
             comment = ''
         else:
-            author = revremark.strip().split('|',1)[0]
-            comment = revremark.strip().split('|',1)[1]
+            author = html.escape(revremark.strip().split('|',1)[0])
+            comment = html.escape(revremark.strip().split('|',1)[1])
         # Ajouter la révision au début du tableau
         revtable.insert(0, {
             'version': revnumber.strip(),
@@ -208,7 +209,7 @@ def treat_admonest(data, admon, tag, puce, style):
         )
 
     # Remplacer les occurrences
-    return re.sub(pattern, replacement, output, flags=re.DOTALL)
+    return re.sub(pattern, replacement, output, re.DOTALL)
 
 
 output = treat_admonest(output, "Tip", "Tip981267", "Puce_20_Tip", "Tip")
@@ -217,7 +218,6 @@ output = treat_admonest(output, "Note", "Note981267", "Puce_20_Note", "Note")
 output = treat_admonest(output, "Caution", "Caution981267", "Puce_20_Caution", "Caution")
 output = treat_admonest(output, "Warning", "Warning981267", "Puce_20_Warning", "Warning")
 output = treat_admonest(output, "", "Informalexample981267", "Puce_20_Informalexample", "Informalexample")
-output = treat_admonest(output, "", "Example981267", "Puce_20_Example", "Example")
 
 output = re.sub(r".*saut_de_page784567.*", '<text:p text:style-name="Pagebreak"/>', output)
 
@@ -225,6 +225,7 @@ output = re.sub(r".*saut_de_page784567.*", '<text:p text:style-name="Pagebreak"/
 try:
     with open(output_file, 'w', encoding='utf-8') as file:
         file.write(output)
+    print(f"Le fichier résultat a été écrit dans : {output_file}")
 except Exception as e:
     print(f"Erreur lors de l'écriture dans le fichier {output_file}: {e}")
     sys.exit(1)
