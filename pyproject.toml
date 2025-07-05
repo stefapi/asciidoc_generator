@@ -1,0 +1,63 @@
+[build-system]
+requires = ["setuptools>=45", "wheel", "setuptools_scm[toml]>=6.2"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "asciidoc-generator"
+version = "1.0.0"
+description = "A script designed to generate high-quality documentation from Asciidoctor files with templating support"
+readme = "README.asc"
+license = {file = "LICENSE"}
+authors = [
+    {name = "Stéphane Apiou"},
+]
+maintainers = [
+    {name = "Stéphane Apiou"},
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Documentation",
+    "Topic :: Text Processing :: Markup",
+]
+keywords = ["asciidoc", "documentation", "pandoc", "libreoffice", "template"]
+requires-python = ">=3.7"
+dependencies = [
+    "jinja2>=3.0.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/yourusername/asciidoc_generator"
+Repository = "https://github.com/yourusername/asciidoc_generator.git"
+Issues = "https://github.com/yourusername/asciidoc_generator/issues"
+
+[project.scripts]
+asciidoc-generate = "scripts.generate:main"
+
+[tool.setuptools]
+packages = ["scripts"]
+include-package-data = true
+
+[tool.setuptools.package-data]
+"*" = ["template/*", "scripts/*", "*.asc", "*.lua"]
+
+[tool.black]
+line-length = 88
+target-version = ['py37']
+
+[tool.isort]
+profile = "black"
+line_length = 88
+
+[tool.flake8]
+max-line-length = 88
+extend-ignore = ["E203", "W503"]

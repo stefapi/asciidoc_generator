@@ -1,0 +1,19 @@
+include README.asc
+include LICENSE
+include Makefile
+include requirements.txt
+include sample.asc
+include CONTRIBUTING.md
+include .editorconfig
+include .gitignore
+
+recursive-include scripts *.py *.sh *.lua
+recursive-include template *.fodt *.odt *.asc Makefile
+recursive-include medias *
+
+global-exclude *.pyc
+global-exclude __pycache__
+global-exclude .DS_Store
+global-exclude *.swp
+global-exclude *.swo
+global-exclude *~
