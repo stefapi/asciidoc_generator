@@ -42,9 +42,7 @@ def extraire_styles(lines):
                 if old_style_name.startswith("TemplateTable"):
                     # Ne pas renommer
                     continue
-                # Define allowed prefixes for style names
-                allowed_prefixes = ('T', 'P', 'L', 'fr', 'gr', 'dp', 'pm', 'Table')
-                if not old_style_name.startswith(allowed_prefixes):
+                if not (old_style_name.startswith('T') or old_style_name.startswith('P') or old_style_name.startswith('L') or old_style_name.startswith('fr') or old_style_name.startswith('gr') or old_style_name.startswith('dp') or old_style_name.startswith('pm') or old_style_name.startswith('Table')):
                     continue
                 # Sinon, on le renomme s'il n'est pas encore dans style_map
                 if old_style_name not in style_map:
@@ -68,26 +66,68 @@ def transforme_et_ecris(lines, style_map, output):
         #    Idem pour text:style-name="XXX"
         #
         #    On peut le faire via une fonction substituant chaque nom trouvé :
-        def create_replacer(attribute_name):
-            """Create a replacement function for a specific attribute."""
-            def replacer(match):
-                old_name = match.group(1)
-                if old_name in style_map:
-                    return f'{attribute_name}="{style_map[old_name]}"'
-                else:
-                    return match.group(0)  # unchanged
-            return replacer
+        def replace_style_name(match):
+            old_name = match.group(1)
+            if old_name in style_map:
+                return f'style:name="{style_map[old_name]}"'
+            else:
+                return match.group(0)  # inchangé
 
-        # Create replacement functions for all attributes
-        replace_style_name = create_replacer('style:name')
-        replace_text_style_name = create_replacer('text:style-name')
-        replace_draw_style_name = create_replacer('draw:style-name')
-        replace_style_page_layout_name = create_replacer('style:page-layout-name')
-        replace_style_next_style_name = create_replacer('style:next-style-name')
-        replace_draw_text_style_name = create_replacer('draw:text-style-name')
-        replace_table_style_name = create_replacer('table:style-name')
-        replace_style_master_page_name = create_replacer('style:master-page-name')
-        replace_style_parent_style_name = create_replacer('style:parent-style-name')
+        def replace_text_style_name(match):
+            old_name = match.group(1)
+            if old_name in style_map:
+                return f'text:style-name="{style_map[old_name]}"'
+            else:
+                return match.group(0)
+
+        def replace_draw_style_name(match):
+            old_name = match.group(1)
+            if old_name in style_map:
+                return f'draw:style-name="{style_map[old_name]}"'
+            else:
+                return match.group(0)
+
+        def replace_style_page_layout_name(match):
+            old_name = match.group(1)
+            if old_name in style_map:
+                return f'style:page-layout-name="{style_map[old_name]}"'
+            else:
+                return match.group(0)
+
+        def replace_style_next_style_name(match):
+            old_name = match.group(1)
+            if old_name in style_map:
+                return f'style:next-style-name="{style_map[old_name]}"'
+            else:
+                return match.group(0)
+
+        def replace_draw_text_style_name(match):
+            old_name = match.group(1)
+            if old_name in style_map:
+                return f'draw:text-style-name="{style_map[old_name]}"'
+            else:
+                return match.group(0)
+
+        def replace_table_style_name(match):
+            old_name = match.group(1)
+            if old_name in style_map:
+                return f'table:style-name="{style_map[old_name]}"'
+            else:
+                return match.group(0)
+
+        def replace_style_master_page_name(match):
+            old_name = match.group(1)
+            if old_name in style_map:
+                return f'style:master-page-name="{style_map[old_name]}"'
+            else:
+                return match.group(0)
+
+        def replace_style_parent_style_name(match):
+            old_name = match.group(1)
+            if old_name in style_map:
+                return f'style:parent-style-name="{style_map[old_name]}"'
+            else:
+                return match.group(0)
 
         new_line = line
         # a) Supprimer la balise meta:generator si elle est présente dans la ligne
@@ -125,33 +165,23 @@ def main():
     input_file = sys.argv[1]
     output_file = sys.argv[2]
 
-    # Read input file
-    try:
-        with open(input_file, "r", encoding="utf-8") as f:
-            lines = f.readlines()
-    except FileNotFoundError:
-        print(f"Error: Input file '{input_file}' does not exist.")
-        sys.exit(1)
-    except Exception as e:
-        print(f"Error reading input file '{input_file}': {e}")
-        sys.exit(1)
+    # Lecture du contenu
+    with open(input_file, "r", encoding="utf-8") as f:
+        lines = f.readlines()
 
-    # Build style mapping
+    # 1) On construit la map de styles
     style_map = extraire_styles(lines)
 
-    # Transform and write
+    # 2) On réécrit en transformant
     output_lines = []
     transforme_et_ecris(lines, style_map, output_lines)
 
-    # Write result
-    try:
-        with open(output_file, "w", encoding="utf-8") as f:
-            for l in output_lines:
-                f.write(l if l.endswith("\n") else l + "\n")
-    except Exception as e:
-        print(f"Error writing output file '{output_file}': {e}")
-        sys.exit(1)
+    # Écriture du résultat
+    with open(output_file, "w", encoding="utf-8") as f:
+        for l in output_lines:
+            f.write(l if l.endswith("\n") else l + "\n")
 
 
 if __name__ == "__main__":
     main()
+

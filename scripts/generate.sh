@@ -12,7 +12,7 @@
 # Installation for epub3 generation
 # gem install asciidoctor-epub3
 
-# Installation for reducer to generate a flat asciidoctor document for AI purpose 
+# Installation for reducer to generate a flat asciidoctor document for AI purpose
 # gem install asciidoctor-reducer
 
 # This program generates from an  initial asciidoctor file https://docs.asciidoctor.org/asciidoc/latest/ (and all dependencies), An openoffice document, A PDF file conform with company templates, a revision history, an approval zone and an updated table of content.
@@ -25,8 +25,12 @@
 prog=`realpath "$0"`
 prog_dirname=`dirname $prog`
 template_dir=`realpath "$prog_dirname"/../template`
+medias_dir=`realpath "$prog_dirname"/../medias`
 outdir=`realpath .`
 testf=n
+if [[ -r "$outdir/.env" ]]; then
+	. "$outdir/.env"
+fi
 
 # Parsing des arguments
 for arg in "$@"; do
@@ -69,20 +73,19 @@ ofile=$outdir/${ofile%%.*}
 template_dir=`realpath "$template_dir"`
 
 mkdir -p "$outdir"
-
+echo $outdir
 # first generate diagrams, code highlighting, link to images and a docbook
-asciidoctor -D"$outdir" -r asciidoctor-diagram -a allow-uri-read -a source-highlighter=rouge -b docbook -o "$ofile.xml" "$file"
-
+asciidoctor -D"$outdir" -r asciidoctor-diagram -a companyname="$COMPANY_NAME" -a legacyname="$LEGACY_NAME" -a newname="$NEW_NAME" -a allow-uri-read -a source-highlighter=rouge -b docbook -o "$ofile.xml" "$file"
 # 20/12/2024: bug in asciidoctor which generates attributes not compatible with pandoc docbook input filter
 sed -i 's/contentwidth/width/g' "$ofile.xml"
 sed -i 's/contentdepth/depth/g' "$ofile.xml"
-
+sed -i 's|fileref="\([^"]*\)"|fileref="'$outdir'/\1"|g' "$ofile.xml"
 # prepare document for pandoc. Suppress first <simpara> element if any which contains elements not part of the output file
 
-awk 'BEGIN { found=0 } 
+awk 'BEGIN { found=0 }
 	 /<section/ && !found { found=1 }
-     /<simpara>/ && !found { found=1; toskip=1; next } 
-     toskip && /<\/simpara>/ { toskip=0; next } 
+     /<simpara>/ && !found { found=1; toskip=1; next }
+     toskip && /<\/simpara>/ { toskip=0; next }
      { if (!toskip) print }' "$ofile.xml" | sed 's/<?asciidoc-pagebreak?>/saut_de_page784567/g' > "$outdir"/temporary_file.xml
 
 if [[ $testf = y ]]; then
@@ -90,7 +93,8 @@ pandoc -f docbook -t odt -L $prog_dirname/admonition.lua --reference-doc="$templ
 else
 pandoc -f docbook -t odt -L $prog_dirname/admonition.lua --template="$template_dir"/template.fodt --reference-doc="$template_dir"/style.odt "$outdir"/temporary_file.xml -o "$ofile.odt"
 fi
-loffice --headless --invisible --convert-to fodt --outdir "$outdir" "$ofile.odt" >/dev/null
+
+loffice --headless --invisible --convert-to fodt --outdir "$outdir" "$ofile.odt"
 
 # treat fields in fodt file from xml: title, author, signature table, revision table
 
@@ -107,12 +111,12 @@ fi
 
 
 # generate output documents
-loffice --headless --invisible --convert-to odt --outdir "$outdir" "$ofile.fodt" >/dev/null
-loffice --headless --invisible --convert-to docx --outdir "$outdir" "$ofile.fodt" >/dev/null
-loffice --headless --invisible --convert-to pdf --outdir "$outdir" "$ofile.odt" >/dev/null
+loffice --headless --invisible --convert-to odt --outdir "$outdir" "$ofile.fodt"
+loffice --headless --invisible --convert-to docx --outdir "$outdir" "$ofile.fodt"
+loffice --headless --invisible --convert-to pdf --outdir "$outdir" "$ofile.odt"
 
 # generate a flat asciidoctor file for AI. extension is adoc to indicate chatgpt that this document is an asciidoc
-asciidoctor-reducer -o "$ofile.adoc" "$file"
+asciidoctor-reducer -o "$ofile.adoc"  -a companyname="$COMPANY_NAME" -a legacyname="$LEGACY_NAME" -a newname="$NEW_NAME" "$file"
 
 # generate rst file for readthedocs site
 pandoc -f docbook -t rst "$outdir"/temporary_file.xml -o "$ofile".tmp

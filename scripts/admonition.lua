@@ -8,7 +8,6 @@ local admonitions = {
   caution   = {pandoc.Str("Caution981267")},
   sidebar   = {pandoc.Str("Sidebar981267")},
   informalexample   = {pandoc.Str("Informalexample981267")},
-  example   = {pandoc.Str("Example981267")},
   }
 
 function Div(el)

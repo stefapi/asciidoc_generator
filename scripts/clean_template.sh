@@ -7,7 +7,6 @@
 # Default values
 prog=`realpath "$0"`
 prog_dirname=`dirname $prog`
-template_dir=`realpath "$prog_dirname"/../template`
 outdir=`realpath .`
 
 # Parsing des arguments
@@ -45,9 +44,6 @@ tfile=$outdir/${tfile%%.*}
 sfile=${sfile:-'style'}
 sfile=`basename "$sfile"`
 sfile=$outdir/${sfile%%.*}
-template_dir=`realpath "$template_dir"`
-
-mkdir -p "$outdir"
 
 $prog_dirname/style.py "$file" "$sfile.fodt"
 $prog_dirname/template.py "$sfile.fodt" "$tfile.fodt"

@@ -130,7 +130,7 @@ def transforme_et_ecris(lines, style_map, output):
             in_startdoc_block = False
             output.append("$body$")
             continue
-
+        
         # 5) Juste avant </office:text>, insérer $for(include-after)$...
         if "</office:text>" in line:
             # On insère d'abord le bloc
@@ -157,33 +157,23 @@ def main():
     input_file = sys.argv[1]
     output_file = sys.argv[2]
 
-    # Read input file
-    try:
-        with open(input_file, "r", encoding="utf-8") as f:
-            lines = f.readlines()
-    except FileNotFoundError:
-        print(f"Error: Input file '{input_file}' does not exist.")
-        sys.exit(1)
-    except Exception as e:
-        print(f"Error reading input file '{input_file}': {e}")
-        sys.exit(1)
+    # Lecture du contenu
+    with open(input_file, "r", encoding="utf-8") as f:
+        lines = f.readlines()
 
-    # Build style mapping
+    # 1) On construit la map de styles
     style_map = extraire_styles(lines)
 
-    # Transform and write
+    # 2) On réécrit en transformant
     output_lines = []
     transforme_et_ecris(lines, style_map, output_lines)
 
-    # Write result
-    try:
-        with open(output_file, "w", encoding="utf-8") as f:
-            for l in output_lines:
-                f.write(l if l.endswith("\n") else l + "\n")
-    except Exception as e:
-        print(f"Error writing output file '{output_file}': {e}")
-        sys.exit(1)
+    # Écriture du résultat
+    with open(output_file, "w", encoding="utf-8") as f:
+        for l in output_lines:
+            f.write(l if l.endswith("\n") else l + "\n")
 
 
 if __name__ == "__main__":
     main()
+
