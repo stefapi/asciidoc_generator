@@ -6,3 +6,6 @@ all:
 
 clean:
 	rm -rf outdir
+
+translate:
+	scripts/translate.sh

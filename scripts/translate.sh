@@ -11,7 +11,7 @@ prog="$(realpath "$0")"
 prog_dirname="$(dirname "$prog")"
 outdir="$(realpath .)/english"
 
-dirs="./maindocs ./common ./policy"
+dirs="."
 
 for dir in $dirs; do
     for file in "$dir"/*.asc; do
